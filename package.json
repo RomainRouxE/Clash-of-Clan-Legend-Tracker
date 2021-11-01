@@ -1,0 +1,24 @@
+{
+  "name": "Clash-of-Clan-Legend-Tracker",
+  "version": "1.0.0",
+  "description": "Clash of Clan Legend Tracker Discord bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RomainRouxE/Clash-of-Clan-Legend-Tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RomainRouxE/Clash-of-Clan-Legend-Tracker/issues"
+  },
+  "homepage": "https://github.com/RomainRouxE/Clash-of-Clan-Legend-Tracker#readme",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "dotenv": "^10.0.0"
+  }
+}
