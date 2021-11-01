@@ -36,25 +36,110 @@ client.on("message", (message) => {
     }
 
     if (CMD_NAME === "add") {
-      var exist = new Boolean(false);
-      for (let i = 0; i < guild.length; i++) {
+      var guildExist = false;
+      var playerExist = false;
+
+      // Search if player exist for guild.
+      for (let i = 0; i < guild.length && guildExist == false; i++) {
         if (
           guild[i][0] === String(arg).substr(1) &&
           guild[i][1] === message.guild.id
         ) {
           message.channel.send("Player is already set");
-          exist = true;
+          guildExist = true;
         }
       }
-      if (exist === false) {
-        guild.push([String(arg).substr(1), message.guild.id]);
+      if (guildExist === false) {
+        guild.push([String(arg).substr(1), message.guild.id, ""]);
+        var data =
+          String(arg).substr(1) + "," + message.guild.id + "," + "" + ",\n";
+        require("fs").appendFileSync("./data/guild.csv", data);
+      }
+
+      // Search if player exist.
+      for (let i = 0; i < player.length && playerExist == false; i++) {
+        if (player[i][0] === String(arg).substr(1)) {
+          playerExist = true;
+          if (guildExist === false) {
+            player[i][9] = player[i][9] + 1;
+          }
+        }
+      }
+      if (playerExist === false) {
         player.push(
-          [String(arg).substr(1), "e", "e", "e", "e", "e"],
-          ["player trophy", "e", "e", "e", "e", "e"]
+          [
+            String(arg).substr(1),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            1,
+          ],
+          ["player trophy", null, null, null, null, null, null, null, null, 1]
         );
+        var data =
+          String(arg).substr(1) + "," + message.guild.id + "," + "" + ",\n";
+        require("fs").appendFileSync("./data/player.csv", data);
+      }
+      //     console.log(guild);
+      //     console.log(player);
+    }
+
+    if (CMD_NAME === "remove") {
+      var playerExist = false;
+      var guildExist = false;
+      for (let i = 0; i < guild.length && guildExist == false; i++) {
+        if (
+          guild[i][0] === String(arg).substr(1) &&
+          guild[i][1] === message.guild.id
+        ) {
+          guild.splice(i, 1);
+          message.channel.send("Player was deleted");
+          guildExist = true;
+          //          console.log(guild);
+        }
+      }
+      if (guildExist == false) {
+        message.channel.send("Player wasn t found");
+      }
+
+      for (
+        let i = 0;
+        i < player.length && playerExist == false && guildExist == true;
+        i++
+      ) {
+        if (player[i][0] === String(arg).substr(1)) {
+          player[i][9] = player[i][9] - 1;
+          console.log(player[i][9]);
+          if (player[i][9] == 0) {
+            player.splice(i + 1, 1);
+            player.splice(i, 1);
+          }
+        }
       }
       console.log(player);
-      //      console.log(String(arg).substr(1));
+    }
+    if (CMD_NAME === "copy" && message.author.id === process.env.ADMIN_ID) {
+      var stream = require("fs").createReadStream("./data/guild.csv");
+      var reader = require("readline").createInterface({ input: stream });
+      reader.on("line", (row) => {
+        guild.push(row.split(","));
+      });
+      setTimeout(function () {
+        console.log(guild);
+      }, 10);
+      var stream = require("fs").createReadStream("./data/player.csv");
+      var reader = require("readline").createInterface({ input: stream });
+      reader.on("line", (row) => {
+        player.push(row.split(","));
+      });
+      setTimeout(function () {
+        console.log(player);
+      }, 10);
     }
   }
 });
