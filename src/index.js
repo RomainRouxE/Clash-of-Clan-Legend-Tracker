@@ -1,5 +1,6 @@
 require("dotenv").config();
 const commands = require("../commands/commands");
+const coc = require("../commands/cocapi");
 
 const {
   Client,
@@ -28,11 +29,9 @@ client.on("message", (message) => {
     if (CMD_NAME === "help") {
       commands.help(message);
     }
-
     if (CMD_NAME === "add") {
       commands.add(arg, message);
     }
-
     if (CMD_NAME === "remove") {
       commands.remove(arg, message);
     }
@@ -41,6 +40,12 @@ client.on("message", (message) => {
       message.author.id === process.env.ADMIN_ID
     ) {
       commands.save_data();
+    }
+    if (CMD_NAME === "channel") {
+      commands.channel(arg, message, client);
+    }
+    if (CMD_NAME === "coc") {
+      coc.coc(arg, message);
     }
   }
 });

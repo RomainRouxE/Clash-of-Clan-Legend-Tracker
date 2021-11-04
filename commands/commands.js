@@ -1,3 +1,5 @@
+const coc = require("./cocapi");
+
 const {
   Client,
   DiscordAPIError,
@@ -7,6 +9,7 @@ const {
 
 var player = [];
 var guild = [];
+var channelID = [];
 
 async function help(message) {
   const embed = new MessageEmbed()
@@ -20,55 +23,60 @@ async function help(message) {
 async function add(arg, message) {
   var guildExist = false;
   var playerExist = false;
+  var trophy = await coc.coc(arg, message);
 
-  // Search if player exist for guild.
-  for (let i = 0; i < guild.length && guildExist == false; i++) {
-    if (
-      guild[i][0] === String(arg).substr(1) &&
-      guild[i][1] === message.guild.id
-    ) {
-      message.channel.send("Player is already set");
-      guildExist = true;
-    }
-  }
-  if (guildExist === false) {
-    guild.push([String(arg).substr(1), message.guild.id, ""]);
-    var data =
-      String(arg).substr(1) + "," + message.guild.id + "," + "" + ",\n";
-    require("fs").appendFileSync("./data/guild.csv", data);
-  }
-
-  // Search if player exist.
-  for (let i = 0; i < player.length && playerExist == false; i++) {
-    if (player[i][0] === String(arg).substr(1)) {
-      playerExist = true;
-      if (guildExist === false) {
-        player[i][9] = player[i][9] + 1;
+  if (trophy > 5000) {
+    // Search if player exist for guild.
+    for (let i = 0; i < guild.length && guildExist == false; i++) {
+      if (
+        guild[i][0] === String(arg).substr(1) &&
+        guild[i][1] === message.guild.id
+      ) {
+        message.channel.send("Player is already set");
+        guildExist = true;
       }
     }
+    if (guildExist === false) {
+      guild.push([String(arg).substr(1), message.guild.id, ""]);
+      var dataGUILD =
+        String(arg).substr(1) + "," + message.guild.id + "," + "" + ",\n";
+      require("fs").appendFileSync("./data/guild.csv", dataGUILD);
+    }
+
+    // Search if player exist.
+    for (let i = 0; i < player.length && playerExist == false; i++) {
+      if (player[i][0] === String(arg).substr(1)) {
+        playerExist = true;
+        if (guildExist === false) {
+          player[i][9] = player[i][9] + 1;
+        }
+      }
+    }
+    if (playerExist === false) {
+      player.push(
+        [
+          String(arg).substr(1),
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+        ],
+        [trophy, null, null, null, null, null, null, null, null, 1]
+      );
+      var dataPLAYER =
+        String(arg).substr(1) + "," + message.guild.id + "," + "" + ",\n";
+      require("fs").appendFileSync("./data/player.csv", dataPLAYER);
+    }
+    //  console.log(guild);
+    //  console.log(player);
+  } else if (trophy != 0) {
+    message.channel.send("Player #" + arg + "only have " + trophy);
   }
-  if (playerExist === false) {
-    player.push(
-      [
-        String(arg).substr(1),
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        1,
-      ],
-      ["player trophy", null, null, null, null, null, null, null, null, 1]
-    );
-    var data =
-      String(arg).substr(1) + "," + message.guild.id + "," + "" + ",\n";
-    require("fs").appendFileSync("./data/player.csv", data);
-  }
-  //  console.log(guild);
-  //  console.log(player);
 }
 
 async function remove(arg, message) {
@@ -110,7 +118,7 @@ async function remove(arg, message) {
     }
     console.log(player);
   } else {
-    message.channel.send("You don t have the right");
+    message.channel.send("You need higher right to do that.");
   }
 }
 
@@ -131,6 +139,32 @@ async function save_data() {
   setTimeout(function () {
     console.log(player);
   }, 10);
+  var stream = require("fs").createReadStream("./data/channel.csv");
+  var reader = require("readline").createInterface({ input: stream });
+  reader.on("line", (row) => {
+    channelID.push(row.split(","));
+  });
+  setTimeout(function () {
+    console.log(channelID);
+  }, 10);
 }
 
-module.exports = { help, add, remove, save_data };
+async function channel(arg, message, client) {
+  var ID = String(arg);
+  ID = ID.substring(0, ID.length - 1).substring(2);
+  try {
+    client.channels.cache
+      .get(ID)
+      .send("I will send player legend trophy here.");
+    channelID.push([message.guild.id, ID]);
+    var dataID =
+      String(arg).substr(1) + "," + message.guild.id + "," + "" + ",\n";
+    require("fs").appendFileSync("./data/channel.csv", dataID);
+  } catch (err) {
+    message.channel.send("Somethinw went wrong with the channel ID");
+    console.log(err);
+  }
+  //  console.log(channelID);
+}
+
+module.exports = { help, add, remove, save_data, channel };
