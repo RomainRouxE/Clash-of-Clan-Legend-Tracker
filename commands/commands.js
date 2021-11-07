@@ -13,10 +13,40 @@ var channelID = [];
 
 async function help(message) {
   const embed = new MessageEmbed()
-    .setTitle("Command")
     .setColor(000000)
-    .setAuthor("ucutsdyuctuyt")
-    .setDescription("desc");
+    .setTitle("Help")
+    .setThumbnail(
+      "https://static.wikia.nocookie.net/clashofclans/images/1/10/Legend.png/revision/latest?cb=20160401051113"
+    )
+    .addFields(
+      {
+        name: "Current commands include :",
+        value: "The prefix of the bot is s!",
+      },
+      {
+        name: "add + #ID",
+        value: "Add a player to track trophy.\nEx : s!add #xxxxxx",
+      },
+      {
+        name: "remove + #ID",
+        value: "Stop tracking a player trophy.\nEx : s!remove #xxxxxx",
+      },
+      {
+        name: "channel + #channel",
+        value:
+          "Set a channel to send the tracking message.\nEx : s!channel #channel",
+      },
+      {
+        name: "\u200B",
+        value:
+          "For channel and remove command, admin, manage server or manage channem permissions is needed.",
+      }
+    )
+    .setTimestamp()
+    .setFooter(
+      "Clash of clan Legend tracker BOT",
+      "https://static.wikia.nocookie.net/clashofclans/images/1/10/Legend.png/revision/latest?cb=20160401051113"
+    );
   message.channel.send(embed);
 }
 
@@ -118,7 +148,9 @@ async function remove(arg, message) {
     }
     console.log(player);
   } else {
-    message.channel.send("You need higher right to do that.");
+    message.channel.send(
+      "You need admin, manage server or manage channem permissions to use this command."
+    );
   }
 }
 
@@ -150,19 +182,29 @@ async function save_data() {
 }
 
 async function channel(arg, message, client) {
-  var ID = String(arg);
-  ID = ID.substring(0, ID.length - 1).substring(2);
-  try {
-    client.channels.cache
-      .get(ID)
-      .send("I will send player legend trophy here.");
-    channelID.push([message.guild.id, ID]);
-    var dataID =
-      String(arg).substr(1) + "," + message.guild.id + "," + "" + ",\n";
-    require("fs").appendFileSync("./data/channel.csv", dataID);
-  } catch (err) {
-    message.channel.send("Somethinw went wrong with the channel ID");
-    console.log(err);
+  if (
+    message.member.hasPermission("ADMINISTRATOR") ||
+    message.member.hasPermission("MANAGE_GUILD") ||
+    message.member.hasPermission("MANAGE_CHANNELS")
+  ) {
+    var ID = String(arg);
+    ID = ID.substring(0, ID.length - 1).substring(2);
+    try {
+      client.channels.cache
+        .get(ID)
+        .send("I will send player legend trophy here.");
+      channelID.push([message.guild.id, ID]);
+      var dataID =
+        String(arg).substr(1) + "," + message.guild.id + "," + "" + ",\n";
+      require("fs").appendFileSync("./data/channel.csv", dataID);
+    } catch (err) {
+      message.channel.send("Somethinw went wrong with the channel ID");
+      console.log(err);
+    }
+  } else {
+    message.channel.send(
+      "You need admin, manage server or manage channem permissions to use this command."
+    );
   }
   //  console.log(channelID);
 }

@@ -5,7 +5,8 @@ const { Message } = require("discord.js");
 async function coc(arg, message) {
   var config = {
     method: "get",
-    url: "https://api.clashofclans.com/v1/players/%23" + String(arg),
+    url:
+      "https://api.clashofclans.com/v1/players/%23" + String(arg).substring(1),
     headers: {
       Authorization: "Bearer " + process.env.COC_TOKEN2,
     },
