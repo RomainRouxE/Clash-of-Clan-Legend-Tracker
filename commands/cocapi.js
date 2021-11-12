@@ -12,10 +12,12 @@ async function coc(arg, message) {
     },
   };
   var trophy;
+  var name;
   await axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data));
+      //console.log(JSON.stringify(response.data));
       //console.log(response.data.trophies);
+      name = response.data.name;
       trophy = response.data.trophies;
     })
     .catch(function (error) {
@@ -27,7 +29,27 @@ async function coc(arg, message) {
       }
       trophy = 0;
     });
-  return trophy;
+  return { trophy, name };
 }
 
-module.exports = { coc };
+async function trophy(arg) {
+  var config = {
+    method: "get",
+    url: "https://api.clashofclans.com/v1/players/%23" + arg,
+    headers: {
+      Authorization: "Bearer " + process.env.COC_TOKEN2,
+    },
+  };
+  var trophy;
+  await axios(config)
+    .then(function (response) {
+      //console.log(JSON.stringify(response.data));
+      //console.log(response.data.trophies);
+      trophy = response.data.trophies;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  return trophy;
+}
+module.exports = { coc, trophy };
