@@ -10,10 +10,10 @@ const {
 } = require("discord.js");
 
 const client = new Client();
-const PREFIX = "-";
+const PREFIX = "l?";
 
 client.on("ready", () => {
-  client.user.setActivity("Legend league", { type: "WATCHING" });
+  client.user.setActivity("l?help", { type: "WATCHING" });
 });
 
 client.on("message", (message) => {
@@ -48,7 +48,7 @@ client.on("message", (message) => {
       coc.coc(arg, message);
     }
     if (CMD_NAME === "spy" && message.author.id === process.env.ADMIN_ID) {
-      commands.spy(message);
+      commands.spy(client);
     }
     if (CMD_NAME === "test") {
       commands.test(client);

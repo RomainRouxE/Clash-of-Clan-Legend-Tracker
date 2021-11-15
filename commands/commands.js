@@ -22,25 +22,25 @@ async function help(message) {
     .addFields(
       {
         name: "Current commands include :",
-        value: "The prefix of the bot is s!",
+        value: "The prefix of the bot is l?",
       },
       {
         name: "add + #ID",
-        value: "Add a player to track trophy.\nEx : s!add #xxxxxx",
+        value: "Add a player to track trophy.\nEx : l?add #xxxxxx",
       },
       {
         name: "remove + #ID",
-        value: "Stop tracking a player trophy.\nEx : s!remove #xxxxxx",
+        value: "Stop tracking a player trophy.\nEx : l?remove #xxxxxx",
       },
       {
         name: "channel + #channel",
         value:
-          "Set a channel to send the tracking message.\nEx : s!channel #channel",
+          "Set a channel to send the tracking message. You need to use this command before using the add cmd.\nEx : l?channel #channel",
       },
       {
         name: "\u200B",
         value:
-          "For channel and remove command, admin, manage server or manage channem permissions is needed.",
+          "For channel and remove command, admin, manage server or manage channem permissions is needed.\n\n[Invite](https://www.google.com/?hl=fr) | [GitHub](https://github.com/)",
       }
     )
     .setTimestamp()
@@ -245,39 +245,130 @@ async function channel(arg, message, client) {
   }
 }
 
-async function spy() {
-  for (let i = 0; i < player.length; i = i + 2) {
+async function spy(client) {
+  // For every player in player array get trophy from coc api | index = index + 2 because there is 1 line for attack and 1 for def
+  for (let index = 0; index < player.length; index = index + 2) {
     var change = false;
     // get current trophy
-    player[i][9] = await coc.trophy(player[i][0]);
+    player[index][9] = await coc.trophy(player[index][0]);
     // if current trophy > trophy 10min ago
-    if (player[i][9] > player[i + 1][9]) {
-      var won = player[i][9] - player[i + 1][9];
-      for (x = 1; player[i][x] != 0; x++) {}
+    if (player[index][9] > player[index + 1][9]) {
+      var won = player[index][9] - player[index + 1][9];
+      for (x = 1; player[index][x] != 0; x++) {}
       if (won > 40) {
-        player[i][x] = won - 40;
-        player[i][x + 1] = 40;
+        player[index][x] = won - 40;
+        player[index][x + 1] = 40;
       } else {
-        player[i][x] = won;
+        player[index][x] = won;
       }
-      player[i + 1][9] = player[i][9];
+      player[index + 1][9] = player[index][9];
       change = true;
     }
-    if (player[i][9] < player[i + 1][9]) {
-      var lost = player[i][9] - player[i + 1][9];
-      for (x = 1; player[i + 1][x] != 0; x++) {}
+    if (player[index][9] < player[index + 1][9]) {
+      var lost = player[index][9] - player[index + 1][9];
+      for (x = 1; player[index + 1][x] != 0; x++) {}
       if (lost > 40) {
-        player[i + 1][x] = lost + 40;
-        player[i + 1][x + 1] = -40;
+        player[index + 1][x] = lost + 40;
+        player[index + 1][x + 1] = -40;
       } else {
-        player[i + 1][x] = lost;
+        player[index + 1][x] = lost;
       }
-      player[i + 1][9] = player[i][9];
+      player[index + 1][9] = player[index][9];
       change = true;
     }
     // update message with att / def
     if (change == true) {
-      console.log("aaa");
+      for (let x = 0; j < guild.length; x++) {
+        if (player[index][0] === guild[x][0]) {
+          //update msg
+          var sendGuildID = guild[x][1];
+          var sendMessageID = guild[x][2];
+          for (let y = 0; y < channelID.length; y++) {
+            if (channelID[y][0] === sendGuildID) {
+              sendChannelID = channelID[y][1];
+              break;
+            }
+          }
+        }
+        var sendGuild = client.guilds.cache.get(sendGuidID);
+        if (!sendGuild) return console.log("Unable to find guild.");
+
+        const sendChannel = guild.channels.cache.get(sendChanID);
+        if (!sendChannel) return console.log("Unable to find channel.");
+
+        try {
+          const sendMessage = await channel.messages.fetch(sendMessID);
+          if (!sendMessage) return console.log("Unable to find message.");
+          const newEmbed = new MessageEmbed()
+            .setColor(000000)
+            .attachFiles(attachment)
+            .setTitle(player[index + 1][0] + " " + player[index][0])
+            .setThumbnail("attachment://legend.png")
+            .addFields(
+              {
+                name:
+                  "Current trophy : " +
+                  player[index][9] +
+                  " (" +
+                  player[index][9] -
+                  player[index + 1][10] +
+                  ")",
+                value: "\u200B",
+              },
+              {
+                name: "Attack :",
+                value:
+                  player[index][1] +
+                  "\n" +
+                  player[index][2] +
+                  "\n" +
+                  player[index][3] +
+                  "\n" +
+                  player[index][4] +
+                  "\n" +
+                  player[index][5] +
+                  "\n" +
+                  player[index][6] +
+                  "\n" +
+                  player[index][7] +
+                  "\n" +
+                  player[index][8] +
+                  "\n",
+                inline: true,
+              },
+              {
+                name: "Deffence :",
+                value:
+                  player[index + 1][1] +
+                  "\n" +
+                  player[index + 1][2] +
+                  "\n" +
+                  player[index + 1][3] +
+                  "\n" +
+                  player[index + 1][4] +
+                  "\n" +
+                  player[index + 1][5] +
+                  "\n" +
+                  player[index + 1][6] +
+                  "\n" +
+                  player[index + 1][7] +
+                  "\n" +
+                  player[index + 1][8] +
+                  "\n",
+                inline: true,
+              }
+            )
+            .setTimestamp()
+            .setFooter(
+              "Clash of clan Legend tracker BOT",
+              "attachment://legend.png"
+            );
+
+          message.edit(newEmbed);
+        } catch (err) {
+          console.log(err);
+        }
+      }
     }
   }
 
@@ -293,49 +384,9 @@ async function spy() {
       }
     }
   }
+  setTimeout(() => {
+    spy(client);
+  }, 50000);
 }
 
-async function test(client) {
-  var guidID = "719886728470593628";
-  var chanID = "720038951586365471";
-  var messID = "908551252487573555";
-  const guild = client.guilds.cache.get(guidID);
-  if (!guild) return console.log("Unable to find guild.");
-
-  const channel = guild.channels.cache.get(chanID);
-  if (!channel) return console.log("Unable to find channel.");
-
-  try {
-    const message = await channel.messages.fetch(messID);
-    if (!message) return console.log("Unable to find message.");
-    const newEmbed = new MessageEmbed()
-      .setColor(000000)
-      .attachFiles(attachment)
-      .setTitle("eeee")
-      .setThumbnail("attachment://legend.png")
-      .addFields(
-        {
-          name: "Current trophy :" + "rrrr",
-          value: "\u200B",
-        },
-        {
-          name: "Attack :",
-          value: guidID + "\n" + chanID + "\n" + messID,
-          inline: true,
-        },
-        {
-          name: "Deffence :",
-          value: "Not yet enought data",
-          inline: true,
-        }
-      )
-      .setTimestamp()
-      .setFooter("Clash of clan Legend tracker BOT", "attachment://legend.png");
-
-    message.edit(newEmbed);
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-module.exports = { help, add, remove, save_data, channel, spy, test };
+module.exports = { help, add, remove, save_data, channel, spy };
