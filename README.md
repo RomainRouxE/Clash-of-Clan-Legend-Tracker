@@ -16,7 +16,7 @@ If multiple attacks / deffences happen at the same time, the bot will display th
 
 - Ex: +40 / -30 at the same time will show only 1 attack +10.
 
-![trackerExemple](https://github.com/RomainRouxE/Clash-of-Clan-Legend-Tracker/blop/main/img/trackerExemple.jpg?raw=true)
+![trackerExemple](https://github.com/RomainRouxE/Clash-of-Clan-Legend-Tracker/blob/main/img/trackerExemple.jpg?raw=true)
 
 ## Commands
 
