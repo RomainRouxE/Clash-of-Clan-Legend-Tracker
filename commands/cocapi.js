@@ -23,9 +23,13 @@ async function coc(arg, message) {
     .catch(function (error) {
       console.log(error);
       if (error.response.status === 404 || error.response.status === 403) {
-        message.channel.send("Player doesn t exist");
+        message.channel.send(
+          "Player doesn't exist. Make sure you provide a correct player tag"
+        );
       } else {
-        message.channel.send("Something went wrong");
+        message.channel.send(
+          "Something went wrong. Try again or contact bot owner"
+        );
       }
       trophy = 0;
     });

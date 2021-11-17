@@ -48,10 +48,19 @@ client.on("message", (message) => {
       coc.coc(arg, message);
     }
     if (CMD_NAME === "spy" && message.author.id === process.env.ADMIN_ID) {
-      commands.spy(client);
+      commands.spy();
     }
-    if (CMD_NAME === "test") {
-      commands.test(client);
+    if (
+      CMD_NAME === "updateMessage" &&
+      message.author.id === process.env.ADMIN_ID
+    ) {
+      commands.updateMessage(client);
+    }
+    if (CMD_NAME === "trophy") {
+      commands.simpleSpy(arg, message);
+    }
+    if (CMD_NAME === "leaderboard") {
+      commands.leaderboard(message);
     }
   }
 });
