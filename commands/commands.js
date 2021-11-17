@@ -49,7 +49,7 @@ async function help(message) {
       {
         name: "For channel and remove command, admin, manage server or manage channem permissions is needed.\n\u200B",
         value:
-          "[Invite](https://www.google.com/?hl=fr) | [GitHub](https://github.com/)",
+          "[Invite](https://discord.com/api/oauth2/authorize?client_id=904420216535134328&permissions=281600&scope=bot) | [GitHub](https://github.com/RomainRouxE/Clash-of-Clan-Legend-Tracker)",
       }
     )
     .setTimestamp()
