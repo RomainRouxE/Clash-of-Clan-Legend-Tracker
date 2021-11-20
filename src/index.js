@@ -1,6 +1,5 @@
 require("dotenv").config();
 const commands = require("../commands/commands");
-const coc = require("../commands/cocapi");
 
 const {
   Client,

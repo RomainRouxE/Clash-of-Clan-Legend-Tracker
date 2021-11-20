@@ -8,7 +8,7 @@ async function coc(arg, message) {
     url:
       "https://api.clashofclans.com/v1/players/%23" + String(arg).substring(1),
     headers: {
-      Authorization: "Bearer " + process.env.COC_TOKEN2,
+      Authorization: "Bearer " + process.env.COC_TOKEN,
     },
   };
   var trophy;
@@ -41,7 +41,7 @@ async function trophy(arg) {
     method: "get",
     url: "https://api.clashofclans.com/v1/players/%23" + arg,
     headers: {
-      Authorization: "Bearer " + process.env.COC_TOKEN2,
+      Authorization: "Bearer " + process.env.COC_TOKEN,
     },
   };
   var trophy;
