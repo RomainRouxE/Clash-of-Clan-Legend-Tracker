@@ -33,7 +33,7 @@ client.on("message", (message) => {
       commands.add(arg, message, client);
     }
     if (CMD_NAME === "remove") {
-      commands.remove(arg, message);
+      commands.remove(arg, message, client);
     }
     if (
       CMD_NAME === "save_data" &&
@@ -43,9 +43,6 @@ client.on("message", (message) => {
     }
     if (CMD_NAME === "channel") {
       commands.channel(arg, message, client);
-    }
-    if (CMD_NAME === "coc") {
-      coc.coc(arg, message);
     }
     if (CMD_NAME === "spy" && message.author.id === process.env.ADMIN_ID) {
       commands.spy();

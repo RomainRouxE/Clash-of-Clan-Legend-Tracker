@@ -75,12 +75,12 @@ async function channel(arg, message, client) {
       var dataID = message.guild.id + "," + ID + "\n";
       require("fs").appendFileSync("./data/channel.csv", dataID);
     } catch (err) {
-      message.channel.send("Somethinw went wrong with the channel ID");
+      message.channel.send("Something went wrong with the channel ID");
       console.log(err);
     }
   } else {
     message.channel.send(
-      "You need admin, manage server or manage channem permissions to use this command."
+      "You need admin, manage server or manage channel permissions to use this command."
     );
   }
 }
@@ -188,7 +188,7 @@ async function add(arg, message, client) {
 }
 
 // remove command : admin - mng_guild - mng-chan role needed. Remove player from guild array. Decrease player count in player array and delete it if it reach 0.
-async function remove(arg, message) {
+async function remove(arg, message, client) {
   if (
     message.member.hasPermission("ADMINISTRATOR") ||
     message.member.hasPermission("MANAGE_GUILD") ||
@@ -201,14 +201,34 @@ async function remove(arg, message) {
         guild[i][0] === String(arg).substr(1) &&
         guild[i][1] === message.guild.id
       ) {
+        for (var z = 0; z < channelID.length; z++) {
+          if (channelID[z][0] === message.guild.id) {
+            var messDelG = client.guilds.cache.get(message.guild.id);
+
+            var messDelC = messDelG.channels.cache.get(channelID[z][1]);
+            if (!messDelC) return console.log("Unable to find channel.");
+            try {
+              var messDelM = await messDelC.messages.fetch(guild[i][2]);
+              if (!messDelM) return console.log("Unable to find message.");
+
+              messDelM.delete();
+            } catch (err) {
+              console.log(err);
+            }
+            break;
+          }
+        }
+
         guild.splice(i, 1);
-        message.channel.send("Player was deleted");
+        message.channel.send("Player successfully removed");
         guildExist = true;
         //          console.log(guild);
       }
     }
     if (guildExist == false) {
-      message.channel.send("Player wasn t found");
+      message.channel.send(
+        "Player wasn't found, please make sure you used the correct #"
+      );
     }
 
     for (
@@ -228,13 +248,14 @@ async function remove(arg, message) {
     //console.log(player);
   } else {
     message.channel.send(
-      "You need admin, manage server or manage channem permissions to use this command."
+      "You need admin, manage server or manage channel permissions to use this command."
     );
   }
 }
 
 // save_data command : only owner of bot can use. Get data from every csv file and push in array. To use in case of bot crash.
 async function save_data() {
+  console.log("save_data command started");
   var stream = require("fs").createReadStream("./data/guild.csv");
   var reader = require("readline").createInterface({ input: stream });
   reader.on("line", (row) => {
@@ -264,6 +285,7 @@ async function save_data() {
 // spy command : only owner of bot can use. Start the "spy" loop to get trophy of every player. Update value in array depanding. Repeat every 10min.
 // At 5am UTC attack/deffence rest
 async function spy() {
+  console.log("Spy command started");
   // For every player in player array get trophy from coc api | index = index + 2 because there is 1 line for attack and 1 for def
   for (let indexP = 0; indexP < player.length; indexP = indexP + 2) {
     // get current trophy
@@ -316,6 +338,7 @@ async function spy() {
 
 // updateMessage command : only owner can use. Start to update the embed message. Update every message on every guild. Repeat every 10min.
 async function updateMessage(client) {
+  console.log("updateMessage comamand started");
   for (var index = 0; index < player.length; index = index + 2) {
     for (var x = 0; x < guild.length; x++) {
       if (player[index][0] === guild[x][0]) {
